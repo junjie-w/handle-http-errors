@@ -19,7 +19,7 @@ export class HttpError extends Error {
 }
 
 export class ValidationError extends HttpError {
-  constructor(message = ReasonPhrases.BAD_REQUEST, details?: ErrorDetails) {
+  constructor(message: string = ReasonPhrases.BAD_REQUEST, details?: ErrorDetails) {
     super(StatusCodes.BAD_REQUEST, 'VALIDATION_ERROR', message, details);
   }
 
@@ -29,7 +29,7 @@ export class ValidationError extends HttpError {
 }
 
 export class BadRequestError extends HttpError {
-  constructor(message = ReasonPhrases.BAD_REQUEST, details?: ErrorDetails) {
+  constructor(message: string = ReasonPhrases.BAD_REQUEST, details?: ErrorDetails) {
     super(StatusCodes.BAD_REQUEST, 'BAD_REQUEST', message, details);
   }
 
@@ -39,7 +39,7 @@ export class BadRequestError extends HttpError {
 }
 
 export class UnauthorizedError extends HttpError {
-  constructor(message = ReasonPhrases.UNAUTHORIZED, details?: ErrorDetails) {
+  constructor(message: string = ReasonPhrases.UNAUTHORIZED, details?: ErrorDetails) {
     super(StatusCodes.UNAUTHORIZED, 'UNAUTHORIZED', message, details);
   }
 
@@ -49,7 +49,7 @@ export class UnauthorizedError extends HttpError {
 }
 
 export class ForbiddenError extends HttpError {
-  constructor(message = ReasonPhrases.FORBIDDEN, details?: ErrorDetails) {
+  constructor(message: string = ReasonPhrases.FORBIDDEN, details?: ErrorDetails) {
     super(StatusCodes.FORBIDDEN, 'FORBIDDEN', message, details);
   }
 
@@ -59,7 +59,7 @@ export class ForbiddenError extends HttpError {
 }
 
 export class NotFoundError extends HttpError {
-  constructor(message = ReasonPhrases.NOT_FOUND, details?: ErrorDetails) {
+  constructor(message: string = ReasonPhrases.NOT_FOUND, details?: ErrorDetails) {
     super(StatusCodes.NOT_FOUND, 'NOT_FOUND', message, details);
   }
 
@@ -69,7 +69,7 @@ export class NotFoundError extends HttpError {
 }
 
 export class InternalServerError extends HttpError {
-  constructor(message = ReasonPhrases.INTERNAL_SERVER_ERROR, details?: ErrorDetails) {
+  constructor(message: string = ReasonPhrases.INTERNAL_SERVER_ERROR, details?: ErrorDetails) {
     super(StatusCodes.INTERNAL_SERVER_ERROR, 'INTERNAL_ERROR', message, details);
   }
 
