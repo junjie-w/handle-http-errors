@@ -73,7 +73,7 @@ export async function errorProcessor(
         details: error.details
       };
 
-      if (includeStack && isDevelopment) {
+      if (includeStack && error.stack) {
         response.stack = error.stack;
       }
 
