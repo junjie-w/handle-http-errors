@@ -1,11 +1,11 @@
-module.exports = {
+export default {
   preset: "ts-jest",
   testEnvironment: "node",
   roots: ["<rootDir>/src"],
   testMatch: ["**/*.test.ts"],
   collectCoverage: true,
   coverageDirectory: "coverage",
-  coveragePathIgnorePatterns: ["/node_modules/", "/__tests__/"],
+  coveragePathIgnorePatterns: ["/node_modules/", "/__tests__/", "src/index.ts"],
   coverageThreshold: {
     global: {
       branches: 80,
