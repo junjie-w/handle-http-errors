@@ -16,7 +16,7 @@ export const errorHandler = async (
   try {
     const errorResponse = await errorProcessor(error, defaultOptions);
     return res.status(errorResponse.status).json(errorResponse);
-  } catch (err) {
+  } catch (_err) {
     return res.status(DEFAULT_ERROR.status).json(DEFAULT_ERROR);
   }
 };
