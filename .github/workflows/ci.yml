@@ -1,4 +1,4 @@
-name: Quality Check
+name: Quality Checks
 
 on:
   pull_request:
@@ -7,21 +7,66 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  test-and-lint:
+    name: Test and Lint
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run build
-      - run: npm run test:coverage
-      - uses: actions/upload-artifact@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Build package
+        run: npm run build
+      
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage report
         if: success()
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
           if-no-files-found: error
+
+  verify-release:
+    name: Verify Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+        
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build package
+        run: npm run build
+  
+      - name: Semantic-release dry-run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release --dry-run
