@@ -5,8 +5,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "",
   "scripts": {
     "build": "tsc",
@@ -22,7 +26,11 @@
     "error-handling",
     "middleware",
     "express",
-    "node"
+    "node",
+    "http-errors",
+    "error-handling-middleware",
+    "express-middleware",
+    "express-error-handler"
   ],
   "author": "",
   "license": "ISC",

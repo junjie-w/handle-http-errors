@@ -1,15 +1,18 @@
 {
-  "name": "express-example",
-  "version": "1.0.0",
+  "name": "express-typescript-example",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "start": "ts-node src/app.ts",
-    "dev": "nodemon src/app.ts"
+    "dev:handler": "node src/withHandler.js",
+    "dev:middleware": "node src/withMiddleware.js",
+    "dev:custom": "node src/withCustomMiddleware.js"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.18.2",
+    "http-error-handler": "file:../"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
+    "@types/express": "^4.17.17",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
