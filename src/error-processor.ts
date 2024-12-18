@@ -1,6 +1,6 @@
-import { isDevelopment } from "./config";
-import { BadRequestError, ForbiddenError, HttpError, NotFoundError, UnauthorizedError, ValidationError } from "./errors";
-import { ErrorHandlerOptions, ErrorResponse } from "./types";
+import { isDevelopment } from "./config.js";
+import { BadRequestError, ForbiddenError, HttpError, NotFoundError, UnauthorizedError, ValidationError } from "./errors.js";
+import { ErrorHandlerOptions, ErrorResponse } from "./types.js";
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 
 export async function errorProcessor(

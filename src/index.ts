@@ -3,7 +3,7 @@ export type {
   ErrorResponse,
   HttpResponse,
   ErrorHandlerOptions 
-} from './types';
+} from './types.js';
 
 export { 
   HttpError,
@@ -14,8 +14,10 @@ export {
   NotFoundError,
   InternalServerError,
   DEFAULT_ERROR 
-} from './errors';
+} from './errors.js';
 
-export { errorProcessor } from './error-processor';
-export { errorHandler} from './error-handler';
-export { errorMiddleware } from './error-middleware';
+export { errorProcessor } from './error-processor.js';
+export { errorHandler} from './error-handler.js';
+export { errorMiddleware } from './error-middleware.js';
+
+export { isDevelopment, isProduction } from './config.js';

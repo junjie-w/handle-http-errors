@@ -1,7 +1,7 @@
-import { ErrorHandlerOptions, HttpResponse } from "./types";
-import { errorProcessor } from "./error-processor";
-import { DEFAULT_ERROR } from "./errors";
-import { isDevelopment } from "./config";
+import { ErrorHandlerOptions, HttpResponse } from "./types.js";
+import { errorProcessor } from "./error-processor.js";
+import { DEFAULT_ERROR } from "./errors.js";
+import { isDevelopment } from "./config.js";
 
 export const errorHandler = async (
   error: unknown,
