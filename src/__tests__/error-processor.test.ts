@@ -90,7 +90,7 @@ describe('errorProcessor', () => {
       expect(onError).toHaveBeenCalledWith(error);
     });
 
-    describe('parsing error handling', () => {
+    describe('parse error handling', () => {
       beforeEach(() => {
         jest.resetModules();
         jest.resetAllMocks();
@@ -153,6 +153,43 @@ describe('errorProcessor', () => {
           message: 'Could not parse request',
           timestamp: expect.any(String),
           details: { error: 'Parse error' }
+        });
+      });
+
+      it('should handle parse error with stack trace when error is instance of Error', async () => {
+        const error = new HttpError(400, 'TEST', 'Test');
+        const parseError = new Error('Parse error with stack');
+        Object.defineProperty(error, 'details', {
+          get: () => { throw parseError; }
+        });
+    
+        const result = await errorProcessor(error, { includeStack: true });
+    
+        expect(result).toEqual({
+          status: 400,
+          code: 'PARSE_ERROR',
+          message: 'Could not parse request',
+          timestamp: expect.any(String),
+          details: isDevelopment ? { error: 'Parse error with stack' } : undefined,
+          stack: expect.any(String)
+        });
+      });
+  
+      it('should handle parse error when error is not instance of Error', async () => {
+        const error = new HttpError(400, 'TEST', 'Test');
+        Object.defineProperty(error, 'details', {
+          get: () => { throw 'Not an error instance'; }
+        });
+    
+        const result = await errorProcessor(error, { includeStack: true });
+    
+        expect(result).toEqual({
+          status: 400,
+          code: 'PARSE_ERROR',
+          message: 'Could not parse request',
+          timestamp: expect.any(String),
+          details: isDevelopment ? { error: 'Parse error' } : undefined,
+          stack: undefined
         });
       });
     })
@@ -309,7 +346,9 @@ describe('errorProcessor', () => {
         status: 500,
         code: 'INTERNAL_ERROR',
         message: isDevelopment ? 'Standard error' : 'Internal Server Error',
-        timestamp: expect.any(String)
+        timestamp: expect.any(String),
+        details: isDevelopment ? { error: 'Standard error' } : undefined,
+        stack: undefined
       });
     });
   })

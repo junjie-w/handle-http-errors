@@ -8,6 +8,9 @@ export async function errorProcessor(
   options: ErrorHandlerOptions
 ): Promise<ErrorResponse> {
   const { includeStack, onError } = options;
+  const timestamp = new Date().toISOString();
+  const getStack = (err: unknown) => 
+    err instanceof Error && includeStack && err.stack ? err.stack : undefined;
 
   if (onError) {
     await onError(error);
@@ -18,8 +21,9 @@ export async function errorProcessor(
       status: StatusCodes.BAD_REQUEST,
       code: 'VALIDATION_ERROR',
       message: error.message || ReasonPhrases.BAD_REQUEST,
-      timestamp: new Date().toISOString(),
-      details: error.details
+      timestamp,
+      details: error.details,
+      stack: getStack(error)
     };
   }
 
@@ -28,8 +32,9 @@ export async function errorProcessor(
       status: StatusCodes.BAD_REQUEST,
       code: 'BAD_REQUEST',
       message: error.message || ReasonPhrases.BAD_REQUEST,
-      timestamp: new Date().toISOString(),
-      details: error.details
+      timestamp,
+      details: error.details,
+      stack: getStack(error)
     };
   }
 
@@ -38,8 +43,9 @@ export async function errorProcessor(
       status: StatusCodes.UNAUTHORIZED,
       code: 'UNAUTHORIZED',
       message: error.message || ReasonPhrases.UNAUTHORIZED,
-      timestamp: new Date().toISOString(),
-      details: error.details
+      timestamp,
+      details: error.details,
+      stack: getStack(error)
     };
   }
 
@@ -48,8 +54,9 @@ export async function errorProcessor(
       status: StatusCodes.FORBIDDEN,
       code: 'FORBIDDEN',
       message: error.message || ReasonPhrases.FORBIDDEN,
-      timestamp: new Date().toISOString(),
-      details: error.details
+      timestamp,
+      details: error.details,
+      stack: getStack(error)
     };
   }
 
@@ -58,8 +65,9 @@ export async function errorProcessor(
       status: StatusCodes.NOT_FOUND,
       code: 'NOT_FOUND',
       message: error.message || ReasonPhrases.NOT_FOUND,
-      timestamp: new Date().toISOString(),
-      details: error.details
+      timestamp,
+      details: error.details,
+      stack: getStack(error)
     };
   }
   
@@ -69,13 +77,10 @@ export async function errorProcessor(
         status: error.status,
         code: error.code,
         message: error.message,
-        timestamp: new Date().toISOString(),
-        details: error.details
+        timestamp,
+        details: error.details,
+        stack: getStack(error)
       };
-
-      if (includeStack && error.stack) {
-        response.stack = error.stack;
-      }
 
       return response;
     } catch (parseError) {
@@ -83,10 +88,11 @@ export async function errorProcessor(
         status: StatusCodes.BAD_REQUEST,
         code: 'PARSE_ERROR',
         message: 'Could not parse request',
-        timestamp: new Date().toISOString(),
+        timestamp,
         details: isDevelopment ? {
           error: (parseError as Error)?.message || 'Parse error'
-        } : undefined
+        } : undefined,
+        stack: getStack(parseError)
       };
     }
   }
@@ -96,8 +102,11 @@ export async function errorProcessor(
       status: StatusCodes.INTERNAL_SERVER_ERROR,
       code: 'INTERNAL_ERROR',
       message: isDevelopment ? error.message : ReasonPhrases.INTERNAL_SERVER_ERROR,
-      timestamp: new Date().toISOString(),
-      stack: includeStack ? error.stack : undefined
+      timestamp,
+      details: isDevelopment ? {
+        error: error.message
+      } : undefined,
+      stack: getStack(error)
     };
   }
 
@@ -105,9 +114,10 @@ export async function errorProcessor(
     status: StatusCodes.SERVICE_UNAVAILABLE,
     code: 'SERVICE_UNAVAILABLE',
     message: isDevelopment ? String(error) : ReasonPhrases.SERVICE_UNAVAILABLE,
-    timestamp: new Date().toISOString(),
+    timestamp,
     details: isDevelopment ? {
       error: String(error)
-    } : undefined
+    } : undefined,
+    stack: getStack(error)
   };
 }
