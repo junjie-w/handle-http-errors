@@ -1,6 +1,9 @@
 {
-  "name": "http-error-handler",
+  "name": "handle-http-errors",
   "version": "1.0.0",
+  "description": "TypeScript-enabled HTTP error handling library providing error classes, standardized responses, flexible handlers, and built-in Express middleware support.",
+  "author": "Junjie Wu",
+  "license": "MIT",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,32 +11,42 @@
     "dist",
     "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/junjie-w/handle-http-errors.git"
+  },
+  "homepage": "https://github.com/junjie-w/handle-http-errors#readme",
+  "bugs": {
+    "url": "https://github.com/junjie-w/handle-http-errors/issues"
+  },
   "publishConfig": {
     "access": "public"
   },
-  "description": "",
   "scripts": {
+    "prebuild": "rm -rf dist",
     "build": "tsc",
+    "build:watch": "tsc -w",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "prepublishOnly": "npm run build",
     "prepare": "husky install"
   },
   "keywords": [
-    "typescript",
     "error-handling",
-    "middleware",
-    "express",
-    "node",
     "http-errors",
-    "error-handling-middleware",
-    "express-middleware",
-    "express-error-handler"
+    "http-error-handler",
+    "middleware",
+    "typescript",
+    "node",
+    "express",
+    "error-response"
   ],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "http-status-codes": "^2.3.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
@@ -53,8 +66,5 @@
     "semantic-release": "^24.2.0",
     "ts-jest": "^29.2.5",
     "typescript": "^5.7.2"
-  },
-  "dependencies": {
-    "http-status-codes": "^2.3.0"
   }
 }
