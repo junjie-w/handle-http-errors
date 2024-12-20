@@ -5,7 +5,7 @@
   "scripts": {
     "dev:handler": "node src/withHandler.js",
     "dev:middleware": "node src/withMiddleware.js",
-    "dev:custom": "node src/withCustomMiddleware.js"
+    "dev:custom-middlware": "node src/withCustomMiddleware.js"
   },
   "dependencies": {
     "express": "^4.18.2",

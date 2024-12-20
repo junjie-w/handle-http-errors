@@ -38,8 +38,11 @@ app.post("/products", async (req, res) => {
     const { name, price } = req.body;
     const errors = {};
 
-    if (!name) errors.name = "Name is required";
-    if (!price) errors.price = "Price is required";
+    if (!name?.trim()) errors.name = "Name is required";
+    if (typeof price !== "number" || price <= 0) {
+      errors.price = "Price must be a positive number";
+    }
+
     if (Object.keys(errors).length > 0) {
       throw new ValidationError("Invalid product data", errors);
     }
@@ -50,6 +53,6 @@ app.post("/products", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+app.listen(3001, () => {
+  console.log("Server running on http://localhost:3001");
 });
