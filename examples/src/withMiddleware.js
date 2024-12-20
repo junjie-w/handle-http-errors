@@ -3,7 +3,7 @@ import {
   errorMiddleware,
   NotFoundError,
   ValidationError,
-} from "http-error-handler";
+} from "handle-http-errors";
 
 const app = express();
 app.use(express.json());
