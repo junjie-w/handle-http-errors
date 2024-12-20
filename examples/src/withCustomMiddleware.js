@@ -4,6 +4,7 @@ import {
   UnauthorizedError,
   ForbiddenError,
   ValidationError,
+  NotFoundError,
 } from "http-error-handler";
 
 const app = express();
@@ -21,37 +22,59 @@ const requireAuth = (req, _res, next) => {
 };
 
 const validateUser = (req, _res, next) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new ValidationError("Missing required fields", {
-      email: !email ? "Email is required" : undefined,
-      password: !password ? "Password is required" : undefined,
-    });
+  const { email, username } = req.body;
+  const errors = {};
+
+  if (!email?.trim()) {
+    errors.email = "Email is required";
+  } else if (!email.includes("@")) {
+    errors.email = "Invalid email format";
   }
-  if (!email.includes("@")) {
-    throw new ValidationError("Invalid email format", {
-      email: "Must be a valid email address",
-    });
+
+  if (!username?.trim()) {
+    errors.username = "Username is required";
+  } else if (username.length < 3) {
+    errors.username = "Username must be at least 3 characters long";
   }
+
+  if (Object.keys(errors).length > 0) {
+    throw new ValidationError("Invalid user data", errors);
+  }
+
   next();
 };
 
 app.get("/users/:id", requireAuth, (req, _res, next) => {
   try {
     const { id } = req.params;
+    if (!id.match(/^\d+$/)) {
+      throw new ValidationError("Invalid user ID", {
+        id: "User ID must be numeric",
+      });
+    }
     throw new NotFoundError("User not found", { id });
   } catch (error) {
     next(error);
   }
 });
 
-app.post("/users", requireAuth, validateUser, (req, res, next) => {
+app.post("/users/register", requireAuth, validateUser, (req, res, next) => {
   try {
     const { role } = req.query;
     if (role === "admin") {
-      throw new ForbiddenError("Insufficient permissions");
+      throw new ForbiddenError("Insufficient permissions", {
+        message: "Only administrators can create admin users",
+        currentUserRole: "user",
+      });
     }
-    res.status(201).json({ message: "User created" });
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        email: req.body.email,
+        username: req.body.username,
+        role: role || "user",
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -61,11 +84,11 @@ app.use(
   errorMiddleware({
     includeStack: process.env.NODE_ENV !== "production",
     onError: async (error) => {
-      console.error(`[${new Date().toISOString()}] Error:`, error);
+      console.error(`[${new Date().toISOString()}] Error: ${error.message}`);
     },
   })
 );
 
-app.listen(3002, () => {
-  console.log("Server running on http://localhost:3002");
+app.listen(3003, () => {
+  console.log("Server running on http://localhost:3003");
 });
