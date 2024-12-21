@@ -1,25 +1,15 @@
 # handle-http-errors
 
-HTTP error handling library with TypeScript support, providing error classes, handlers, and middleware support.
+Type-safe HTTP error handling package providing error classes, standardized responses, error handler, and built-in Express middleware support. Available as [NPM package](https://www.npmjs.com/package/handle-http-errors).
 
-## ☘️ Features
+## 🚂 Features
 
-- Error Classes - Built-in HTTP error classes with type support
-- Error Handler - Flexible error handling with standardized responses
-- Middleware Support - Ready-to-use Express middleware
-- TypeScript Support - Full type safety with TypeScript
+- Error Classes
+- Error Handler
+- Express Middleware Support
+- TypeScript Support
 
-## 📥 Installation
-
-```bash
-npm install handle-http-errors
-# or
-yarn add handle-http-errors
-# or
-pnpm add handle-http-errors
-```
-
-## 📖 Usage
+## ☘️ Usage
 
 ### 🔧 Error Handler
 
@@ -41,7 +31,7 @@ app.post('/users', async (req, res) => {
 });
 ```
 
-### 🌐 Middleware
+### 🌐 Express Middleware
 
 ```typescript
 import express from 'express';
@@ -60,17 +50,44 @@ app.get('/users/:id', (req, res, next) => {
 app.use(errorMiddleware());
 ```
 
+## ⚙️ Configuration
+
+```typescript
+interface ErrorHandlerOptions {
+  includeStack?: boolean;                // Include stack traces
+  onError?: (error: unknown) => void;    // onError callback
+}
+
+// Use with handler
+app.post('/users', async (req, res) => {
+  try {
+    throw new ValidationError('Invalid data');
+  } catch (error) {
+    return errorHandler(error, res, {
+      includeStack: process.env.NODE_ENV !== 'production',
+      onError: (error) => console.error(error)
+    });
+  }
+});
+
+// Use with middleware
+app.use(errorMiddleware({
+  includeStack: process.env.NODE_ENV !== 'production',
+  onError: (error) => console.error(error)
+}));
+```
+
 ## 🗂️ Error Classes
 
 ```typescript
 import {
-  HttpError,           // Base error class
-  ValidationError,     // 400 - Validation errors
-  BadRequestError,     // 400 - Malformed requests
-  UnauthorizedError,   // 401 - Authentication errors
-  ForbiddenError,      // 403 - Authorization errors
-  NotFoundError,       // 404 - Resource not found
-  InternalServerError  // 500 - Server errors
+  HttpError,               // Base error class
+  ValidationError,         // 400 - Validation errors
+  BadRequestError,         // 400 - Malformed requests
+  UnauthorizedError,       // 401 - Authentication errors
+  ForbiddenError,          // 403 - Authorization errors
+  NotFoundError,           // 404 - Resource not found
+  InternalServerError      // 500 - Server errors
 } from 'handle-http-errors';
 ```
 
@@ -79,45 +96,28 @@ import {
 ```typescript
 {
   status: number;       // HTTP status code
-  code: string;         // Error code (e.g., 'VALIDATION_ERROR')
+  code: string;         // Error code
   message: string;      // Error message
   timestamp: string;    // ISO timestamp
   details?: object;     // Optional error details
-  stack?: string;       // Stack trace (development only)
+  stack?: string;       // Stack trace
 }
 ```
 
-## ⚙️ Configuration
+## 🪺 Examples
 
-```typescript
-// Middleware options
-interface ErrorHandlerOptions {
-  includeStack?: boolean;              // Include stack traces
-  onError?: (error: unknown) => void;  // Error callback
-}
+Check out the [examples](https://github.com/junjie-w/handle-http-errors/tree/main/examples) directory for detailed usage examples:
 
-// Using with options
-app.use(errorMiddleware({
-  includeStack: process.env.NODE_ENV !== 'production',
-  onError: (error) => console.error(error)
-}));
+```bash
+git clone https://github.com/junjie-w/handle-http-errors.git
+cd handle-http-errors/examples
+npm install
+
+# Try different examples
+npm run dev:handler                 # Error handler usage
+npm run dev:middleware              # Express middleware usage
+npm run dev:custom-middleware       # Creating custom error-throwing middlewares
 ```
-
-## 🔍 Development vs Production
-
-Development Mode (`NODE_ENV !== 'production'`):
-- Detailed error messages
-- Stack traces (when enabled)
-- Error details included
-
-Production Mode (`NODE_ENV === 'production'`):
-- Generic error messages
-- No stack traces
-- Limited error details
-
-## 📚 Examples
-
-Check out the [examples](https://github.com/junjie-w/handle-http-errors/tree/main/examples) directory for detailed usage examples.
 
 ## 📄 License
 
