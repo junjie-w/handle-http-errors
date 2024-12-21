@@ -1,7 +1,7 @@
 {
   "name": "handle-http-errors",
   "version": "1.0.0",
-  "description": "TypeScript-enabled HTTP error handling library providing error classes, standardized responses, flexible handlers, and built-in Express middleware support.",
+  "description": "Type-safe HTTP error handling package providing error classes, standardized responses, error handler, and built-in Express middleware support.",
   "author": "Junjie Wu",
   "license": "MIT",
   "type": "module",
