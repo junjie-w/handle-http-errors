@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/junjie-w/handle-http-errors/compare/v1.0.0...v1.0.1) (2024-12-21)
+
+
+### Bug Fixes
+
+* update tests and docs ([#12](https://github.com/junjie-w/handle-http-errors/issues/12)) ([2a4046d](https://github.com/junjie-w/handle-http-errors/commit/2a4046df635330afc68c5dc6d738dd2ae3d56645))
+
 # 1.0.0 (2024-12-20)
 
 
