@@ -1,24 +1,24 @@
 # handle-http-errors Examples
 
-Examples of using [handle-http-errors](https://www.npmjs.com/package/handle-http-errors) with different approaches.
+Examples of using [handle-http-errors](https://www.npmjs.com/package/handle-http-errors) package.
 
-## 🚀 Running Examples
+## 🚂 Run Examples
 
 ```bash
 npm install
 
-npm run dev:handler        # Error handler usage (Port 3001)
-npm run dev:middleware     # Middleware usage (Port 3002)
-npm run dev:custom         # Custom middlewares usage (Port 3003)
+npm run dev:handler                 # Error handler usage
+npm run dev:middleware              # Express middleware usage
+npm run dev:custom-middleware       # Creating custom error-throwing middlewares
 ```
 
-### 🔧 Error Handler Example (Port 3001)
+### 🔧 Error Handler Usage
 
 ```bash
 npm run dev:handler
 ```
 
-Test endpoints:
+#### 🌱 Error Handling Test Scenarios:
 
 ```bash
 # Test NotFoundError
@@ -43,13 +43,13 @@ curl -X POST \
   http://localhost:3001/products
 ```
 
-### 🌐 Middleware Example (Port 3002)
+### 🌐 Express Middleware Usage
 
 ```bash
 npm run dev:middleware
 ```
 
-Test endpoints:
+#### 🌱 Error Handling Test Scenarios:
 
 ```bash
 # Test NotFoundError
@@ -73,7 +73,7 @@ curl -X POST \
   -d '{"email":"invalid-email","username":"test"}' \
   http://localhost:3002/users/register
 
-# Test ValidationError with short username
+# Test ValidationError with invalid username
 curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","username":"a"}' \
@@ -86,13 +86,13 @@ curl -X POST \
   http://localhost:3002/users/register
 ```
 
-### 🛠️ Custom Middleware Example (Port 3003)
+### 🛠️ Creating Custom Error-throwing Middlewares
 
 ```bash
 npm run dev:custom-middleware
 ```
 
-Test endpoints:
+#### 🌱 Error Handling Test Scenarios:
 
 ```bash
 # Test UnauthorizedError without token
@@ -123,7 +123,7 @@ curl -X POST \
   -d '{"email":"invalid-email","username":"a"}' \
   http://localhost:3003/users/register
 
-# Test ForbiddenError when creating admin
+# Test ForbiddenError when creating admin users
 curl -X POST \
   -H "Authorization: valid-token" \
   -H "Content-Type: application/json" \
@@ -137,8 +137,3 @@ curl -X POST \
   -d '{"email":"test@example.com","username":"testuser"}' \
   http://localhost:3003/users/register
 ```
-
-Each example demonstrates different aspects of error handling:
-- Error Handler: Direct usage of errorHandler
-- Middleware: Global error handling with middleware
-- Custom Middleware: Creating custom error-throwing middlewares
