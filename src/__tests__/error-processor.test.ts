@@ -10,7 +10,8 @@ jest.mock('../config', () => ({
 
 describe('errorProcessor', () => {
   const options = { includeStack: false };
-  let originalEnv = process.env
+  const timestamp = expect.any(String);
+  
   describe('HttpError handling', () => {
     it('should process HttpError with stack trace when includeStack is true', async () => {
       const error = new HttpError(400, 'TEST_ERROR', 'Test message');
@@ -20,7 +21,7 @@ describe('errorProcessor', () => {
         status: 400,
         code: 'TEST_ERROR',
         message: 'Test message',
-        timestamp: expect.any(String),
+        timestamp,
         stack: expect.any(String)
       });
     });
@@ -33,7 +34,7 @@ describe('errorProcessor', () => {
         status: 400,
         code: 'TEST_ERROR',
         message: 'Test message',
-        timestamp: expect.any(String)
+        timestamp
       });
       expect(result.stack).toBeUndefined();
     });
@@ -47,7 +48,7 @@ describe('errorProcessor', () => {
         status: 400,
         code: 'TEST_ERROR',
         message: 'Test message',
-        timestamp: expect.any(String)
+        timestamp
       });
       expect(result.stack).toBeUndefined();
     });
@@ -60,9 +61,17 @@ describe('errorProcessor', () => {
         status: 400,
         code: 'TEST_ERROR',
         message: 'Test message',
-        timestamp: expect.any(String),
+        timestamp,
         details: { foo: 'bar' }
       });
+    });
+    
+    it('should call onError if provided', async () => {
+      const onError = jest.fn();
+      const error = new Error('Test error');
+  
+      await errorProcessor(error, { onError });
+      expect(onError).toHaveBeenCalledWith(error);
     });
 
     it('should handle error when parsing HttpError fails', async () => {
@@ -77,49 +86,12 @@ describe('errorProcessor', () => {
         status: 400,
         code: 'PARSE_ERROR',
         message: 'Could not parse request',
-        timestamp: expect.any(String),
+        timestamp,
         details: isDevelopment ? { error: 'Parse error' } : undefined
       });
     }); 
-    
-    it('should call onError if provided', async () => {
-      const onError = jest.fn();
-      const error = new Error('Test error');
-  
-      await errorProcessor(error, { onError });
-      expect(onError).toHaveBeenCalledWith(error);
-    });
 
     describe('parse error handling', () => {
-      beforeEach(() => {
-        jest.resetModules();
-        jest.resetAllMocks();
-        process.env = { ...originalEnv, NODE_ENV: 'development' };
-      });
-    
-      afterEach(() => {
-        process.env = originalEnv
-      });
-      
-
-      it('should include parse error details in development', async () => {
-        const error = new HttpError(400, 'TEST', 'Test');
-        Object.defineProperty(error, 'details', {
-          get: () => { throw new Error('Custom parse error message'); }
-        });
-    
-        const result = await errorProcessor(error, options);
-    
-        expect(result).toEqual({
-          status: 400,
-          code: 'PARSE_ERROR',
-          message: 'Could not parse request',
-          timestamp: expect.any(String),
-          details: { error: 'Custom parse error message' }
-        });
-      });
-
-   
       it('should include parse error details in development', async () => {        
         const error = new HttpError(400, 'TEST', 'Test');
         Object.defineProperty(error, 'details', {
@@ -132,7 +104,7 @@ describe('errorProcessor', () => {
           status: 400,
           code: 'PARSE_ERROR',
           message: 'Could not parse request',
-          timestamp: expect.any(String),
+          timestamp,
           details: {
             error: 'Custom parse error message'
           }
@@ -151,7 +123,7 @@ describe('errorProcessor', () => {
           status: 400,
           code: 'PARSE_ERROR',
           message: 'Could not parse request',
-          timestamp: expect.any(String),
+          timestamp,
           details: { error: 'Parse error' }
         });
       });
@@ -169,7 +141,7 @@ describe('errorProcessor', () => {
           status: 400,
           code: 'PARSE_ERROR',
           message: 'Could not parse request',
-          timestamp: expect.any(String),
+          timestamp,
           details: isDevelopment ? { error: 'Parse error with stack' } : undefined,
           stack: expect.any(String)
         });
@@ -187,7 +159,7 @@ describe('errorProcessor', () => {
           status: 400,
           code: 'PARSE_ERROR',
           message: 'Could not parse request',
-          timestamp: expect.any(String),
+          timestamp,
           details: isDevelopment ? { error: 'Parse error' } : undefined,
           stack: undefined
         });
@@ -204,7 +176,7 @@ describe('errorProcessor', () => {
         status: StatusCodes.BAD_REQUEST,
         code: 'VALIDATION_ERROR',
         message: 'Validation failed',
-        timestamp: expect.any(String)
+        timestamp
       });
     });
   
@@ -216,7 +188,7 @@ describe('errorProcessor', () => {
         status: StatusCodes.BAD_REQUEST,
         code: 'VALIDATION_ERROR',
         message: ReasonPhrases.BAD_REQUEST,
-        timestamp: expect.any(String)
+        timestamp
       });
     });
   });
@@ -230,7 +202,7 @@ describe('errorProcessor', () => {
         status: StatusCodes.BAD_REQUEST,
         code: 'BAD_REQUEST',
         message: 'Bad request',
-        timestamp: expect.any(String),
+        timestamp,
       });
     });
 
@@ -242,7 +214,7 @@ describe('errorProcessor', () => {
         status: StatusCodes.BAD_REQUEST,
         code: 'BAD_REQUEST',
         message: ReasonPhrases.BAD_REQUEST,
-        timestamp: expect.any(String)
+        timestamp
       });
     });
   });
@@ -256,7 +228,7 @@ describe('errorProcessor', () => {
         status: 401,
         code: 'UNAUTHORIZED',
         message: 'Not logged in',
-        timestamp: expect.any(String)
+        timestamp
       });
     });
 
@@ -268,7 +240,7 @@ describe('errorProcessor', () => {
         status: StatusCodes.UNAUTHORIZED,
         code: 'UNAUTHORIZED',
         message: ReasonPhrases.UNAUTHORIZED,
-        timestamp: expect.any(String)
+        timestamp
       });
     });
   });
@@ -282,7 +254,7 @@ describe('errorProcessor', () => {
         status: 403,
         code: 'FORBIDDEN',
         message: 'No access',
-        timestamp: expect.any(String)
+        timestamp
       });
     });
 
@@ -293,7 +265,7 @@ describe('errorProcessor', () => {
         status: StatusCodes.FORBIDDEN,
         code: 'FORBIDDEN',
         message: ReasonPhrases.FORBIDDEN,
-        timestamp: expect.any(String)
+        timestamp
       });
     })
   })
@@ -307,7 +279,7 @@ describe('errorProcessor', () => {
         status: 404,
         code: 'NOT_FOUND',
         message: 'User not found',
-        timestamp: expect.any(String)
+        timestamp
       });
     });
 
@@ -318,7 +290,7 @@ describe('errorProcessor', () => {
         status: StatusCodes.NOT_FOUND,
         code: 'NOT_FOUND',
         message: ReasonPhrases.NOT_FOUND,
-        timestamp: expect.any(String)
+        timestamp
       });
     })
   });
@@ -332,7 +304,7 @@ describe('errorProcessor', () => {
         status: 500,
         code: 'INTERNAL_ERROR',
         message: 'Internal server error',
-        timestamp: expect.any(String)
+        timestamp
       });
     });
   })
@@ -346,7 +318,7 @@ describe('errorProcessor', () => {
         status: 500,
         code: 'INTERNAL_ERROR',
         message: isDevelopment ? 'Standard error' : 'Internal Server Error',
-        timestamp: expect.any(String),
+        timestamp,
         details: isDevelopment ? { error: 'Standard error' } : undefined,
         stack: undefined
       });
@@ -361,21 +333,8 @@ describe('errorProcessor', () => {
         status: 503,
         code: 'SERVICE_UNAVAILABLE',
         message: isDevelopment ? 'unknown error' : 'Service Unavailable',
-        timestamp: expect.any(String),
+        timestamp,
         details: isDevelopment ? { error: 'unknown error' } : undefined
-      });
-    });
-
-    it('should process unknown errors as service unavailable in development', async () => {
-      process.env.NODE_ENV = 'development';
-      const result = await errorProcessor('unknown error', options);
-    
-      expect(result).toEqual({
-        status: 503,
-        code: 'SERVICE_UNAVAILABLE',
-        message: 'unknown error',
-        timestamp: expect.any(String),
-        details: { error: 'unknown error' }
       });
     });
   })
